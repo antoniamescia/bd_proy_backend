@@ -11,5 +11,7 @@ const pool = mysql.createPool({
     database: process.env.MYSQL_DATABASE
 }).promise();
 
-const result = await pool.query('SELECT * FROM personas');
-console.log(result[0]);
+export async function getPeople() {
+    const [rows] = await pool.query('SELECT * FROM personas');
+    return rows;
+}
