@@ -17,4 +17,4 @@ RUN cp /usr/share/zoneinfo/America/Montevideo /etc/localtime
 COPY --from=builder /backend /app/bin/backend
 COPY docker.env /app.env
 EXPOSE 8080
-CMD [ "/app/bin/budg" ]
+CMD [ "/app/bin/backend" ]
