@@ -1,0 +1,53 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  REPO: ${{ github.repository }}
+  REGISTRY: ghcr.io
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: docker login
+        env:
+          DOCKER_USER: ${{ github.actor }}
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker login ${{ env.REGISTRY }} -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: image env in lower case
+        run: |
+          echo "IMAGE_NAME=$(echo $REGISTRY/$REPO | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Build the amd64 image
+        run: docker build --build-arg opts="CGO_ENABLED=0 GOARCH=amd64" -t ${{ env.IMAGE_NAME }}:latest-amd64 .
+      - name: Build the arm64 image
+        run: docker build --build-arg opts="GOARCH=arm64 GOARM=7" -t ${{ env.IMAGE_NAME }}:latest-arm64v7 .
+      - name: Tag with short SHA
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:latest-amd64 ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker tag ${{ env.IMAGE_NAME }}:latest-arm64v7 ${{ env.IMAGE_NAME }}:${{ github.sha }}-arm64v7
+
+      - name: Docker Push amd64
+        run: docker push ${{ env.IMAGE_NAME }}:latest-amd64
+      - name: Docker Push arm64v7
+        run: docker push ${{ env.IMAGE_NAME }}:latest-arm64v7
+      - name: Docker Push short SHA
+        run: |
+          docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}-arm64v7
+
+#      - name: Deploy to Kubernetes cluster
+#        uses: kodermax/kubectl-aws-eks@master
+#        env:
+#          RELEASE_IMAGE: ${{ env.IMAGE_NAME }}:${{ github.sha }}-arm64v7
+#          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+#          KUBE_NAMESPACE: budg
+#        with:
+#          args: set image deployment/budg-backend-api budg-backend-api=${{ env.RELEASE_IMAGE }} --record -n $KUBE_NAMESPACE
