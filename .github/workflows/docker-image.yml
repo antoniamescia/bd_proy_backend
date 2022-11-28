@@ -43,11 +43,11 @@ jobs:
           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}-arm64v7
 
-#      - name: Deploy to Kubernetes cluster
-#        uses: kodermax/kubectl-aws-eks@master
-#        env:
-#          RELEASE_IMAGE: ${{ env.IMAGE_NAME }}:${{ github.sha }}-arm64v7
-#          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-#          KUBE_NAMESPACE: budg
-#        with:
-#          args: set image deployment/budg-backend-api budg-backend-api=${{ env.RELEASE_IMAGE }} --record -n $KUBE_NAMESPACE
+      - name: Deploy to Kubernetes cluster
+        uses: kodermax/kubectl-aws-eks@master
+        env:
+          RELEASE_IMAGE: ${{ env.IMAGE_NAME }}:${{ github.sha }}-arm64v7
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+          KUBE_NAMESPACE: budg
+        with:
+          args: set image deployment/bd-backend-api bd-backend-api=${{ env.RELEASE_IMAGE }} --record -n $KUBE_NAMESPACE
