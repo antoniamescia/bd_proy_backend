@@ -2,8 +2,9 @@ package models
 
 // JwtToken is a JWT token.
 type JwtToken struct {
-	Token      string `json:"token"`
-	Expiration int64  `json:"expiration"`
+	Token      string     `json:"token"`
+	Expiration int64      `json:"expiration"`
+	Roles      []UserRole `json:"roles"`
 }
 
 type UserLogin struct {
