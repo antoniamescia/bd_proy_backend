@@ -52,7 +52,6 @@ func (p *RolesAplicativos) GetRolesAplicativos() ([]RolesAplicativos, error) {
 		}
 		rolesAplicativosList = append(rolesAplicativosList, p)
 	}
-	fmt.Println(rolesAplicativosList)
 
 	for i, _ := range rolesAplicativosList {
 		query := fmt.Sprintf("select AppId, NombreApp from nombre_aplicativos_roles where RolNegID = %d", rolesAplicativosList[i].RolNegId)
@@ -114,7 +113,6 @@ func (p *PermissionRequests) UpdatePermissionRequest() error {
 //Get roles of a user
 func (u *UserRole) GetUserRoles(UserEmail string) ([]UserRole, error) {
 	query := fmt.Sprintf("SELECT rol_neg_id as RolId, descripcion_rol_neg as Descripcion FROM roles_usuario WHERE email = '%s' order by rol_neg_id asc", UserEmail)
-	fmt.Println(query)
 	rows, err := database.QueryDB(query)
 	if err != nil {
 		ErrorLogger.Println("Error getting user roles: ", err)
@@ -131,7 +129,6 @@ func (u *UserRole) GetUserRoles(UserEmail string) ([]UserRole, error) {
 		}
 		userRolesList = append(userRolesList, u)
 	}
-	fmt.Println(userRolesList)
 	return userRolesList, nil
 }
 

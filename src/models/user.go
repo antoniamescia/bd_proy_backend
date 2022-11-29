@@ -127,7 +127,6 @@ func (u *User) GetUser() (User, error) {
 		}
 	}
 
-	fmt.Println(*u)
 	return *u, nil
 }
 

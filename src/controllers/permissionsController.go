@@ -92,9 +92,7 @@ func UpdatePermissionRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatePermissionRequest(w http.ResponseWriter, r *http.Request) {
-
-	//validate token
-	_, errToken := validateToken(r)
+	user, errToken := validateToken(r)
 
 	if errToken != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -103,8 +101,16 @@ func CreatePermissionRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	permissions := models.PermissionRequests{}
+	userData, errrUserData := user.GetUser()
+	if errrUserData != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(responses.Exception{Message: errrUserData.Error()})
+		return
+	}
 
+	permissions := models.PermissionRequests{}
+	permissions.UserId = userData.UserId
 	err := json.NewDecoder(r.Body).Decode(&permissions)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")

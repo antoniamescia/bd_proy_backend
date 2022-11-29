@@ -44,7 +44,6 @@ func (q *PeopleQuestion) GetPeopleAnswer() error {
 		ErrorLogger.Println("Error getting questions: ", err)
 		return err
 	}
-	var peopleAnswers PeopleQuestion
 
 	for rows.Next() {
 		err := rows.Scan(&q.IdPregunta, &q.UserId, &q.Respuesta)
@@ -53,7 +52,6 @@ func (q *PeopleQuestion) GetPeopleAnswer() error {
 			return err
 		}
 	}
-	fmt.Println("la respuesta desde la base es", peopleAnswers)
 	return nil
 }
 
