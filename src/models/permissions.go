@@ -80,3 +80,15 @@ func (u *UserRole) GetUserRoles(UserEmail string) ([]UserRole, error) {
 	fmt.Println(userRolesList)
 	return userRolesList, nil
 }
+
+//Create a new permission request
+func (p *PermissionRequests) CreatePermissionRequest() error {
+	query := fmt.Sprintf("INSERT INTO permisos(user_id, app_id, rol_neg_id, estado, fecha_solicitud,fecha_autorizacion) VALUES (%d, %d, %d,'PENDIENTE', now(), now())", p.UserId, p.AppId, p.RolNegId)
+
+	_, err := database.UpdateDB(query)
+	if err != nil {
+		ErrorLogger.Println("Error getting permission requests: ", err)
+		return err
+	}
+	return nil
+}

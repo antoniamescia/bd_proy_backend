@@ -13,6 +13,7 @@ func PermissionRouter(r *mux.Router) *mux.Router {
 	u.HandleFunc("", controllers.GetUserRoles).Methods("GET")
 	u.HandleFunc("/requests", controllers.GetPermissionRequests).Methods("GET")
 	u.HandleFunc("/requests", controllers.UpdatePermissionRequest).Methods("PUT")
+	u.HandleFunc("/requests", controllers.CreatePermissionRequest).Methods("POST")
 	u.MethodNotAllowedHandler = http.HandlerFunc(MethodNotAllowed)
 	return u
 }
