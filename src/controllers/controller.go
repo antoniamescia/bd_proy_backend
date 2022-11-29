@@ -42,6 +42,7 @@ func validateToken(r *http.Request) (models.User, error) {
 			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 				var user models.User
 				mapstructure.Decode(claims, &user)
+
 			}
 			return user, nil
 		} else {

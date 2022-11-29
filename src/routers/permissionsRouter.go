@@ -11,6 +11,8 @@ func PermissionRouter(r *mux.Router) *mux.Router {
 	// allow CORS
 	u.Use(mux.CORSMethodMiddleware(u))
 	u.HandleFunc("", controllers.GetUserRoles).Methods("GET")
+	u.HandleFunc("/requests", controllers.GetPermissionRequests).Methods("GET")
+	u.HandleFunc("/requests", controllers.UpdatePermissionRequest).Methods("PUT")
 	u.MethodNotAllowedHandler = http.HandlerFunc(MethodNotAllowed)
 	return u
 }

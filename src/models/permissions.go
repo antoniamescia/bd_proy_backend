@@ -5,8 +5,8 @@ import (
 	"proyectoBD/src/database"
 )
 
-type permissionRequests struct {
-	Nombre            string `json:"nombre"`
+type PermissionRequests struct {
+	Nombres           string `json:"nombre"`
 	Email             string `json:"email"`
 	Aplicacion        string `json:"aplicacion"`
 	Permiso           string `json:"permiso"`
@@ -24,7 +24,7 @@ type UserRole struct {
 }
 
 //GetPermissionRequests returns all the permission requests.
-func (p *permissionRequests) GetPermissionRequests() ([]permissionRequests, error) {
+func (p *PermissionRequests) GetPermissionRequests() ([]PermissionRequests, error) {
 	query := fmt.Sprintf("SELECT * FROM permisos_solicitados")
 	rows, err := database.QueryDB(query)
 	if err != nil {
@@ -32,10 +32,10 @@ func (p *permissionRequests) GetPermissionRequests() ([]permissionRequests, erro
 		return nil, err
 	}
 
-	var permissionRequestsList []permissionRequests
+	var permissionRequestsList []PermissionRequests
 	for rows.Next() {
-		var p permissionRequests
-		err = rows.Scan(&p.Nombre, &p.Email, &p.Aplicacion, &p.Permiso, &p.FechaSolicitud, &p.FechaAutorizacion, &p.Estado, &p.UserId, &p.AppId, &p.RolNegId)
+		var p PermissionRequests
+		err = rows.Scan(&p.Nombres, &p.Email, &p.Aplicacion, &p.Permiso, &p.FechaSolicitud, &p.FechaAutorizacion, &p.Estado, &p.UserId, &p.AppId, &p.RolNegId)
 		if err != nil {
 			ErrorLogger.Println("Error scanning permission requests: ", err)
 			return nil, err
@@ -46,9 +46,20 @@ func (p *permissionRequests) GetPermissionRequests() ([]permissionRequests, erro
 	return permissionRequestsList, nil
 }
 
+//update permission request
+func (p *PermissionRequests) UpdatePermissionRequest() error {
+	query := fmt.Sprintf("UPDATE permisos SET estado = '%s', fecha_autorizacion = now() WHERE user_id = %d AND app_id = %d AND rol_neg_id = %d", p.Estado, p.UserId, p.AppId, p.RolNegId)
+	_, err := database.UpdateDB(query)
+	if err != nil {
+		ErrorLogger.Println("Error updating permission request: ", err)
+		return err
+	}
+	return nil
+}
+
 //Get roles of a user
 func (u *UserRole) GetUserRoles(UserEmail string) ([]UserRole, error) {
-	query := fmt.Sprintf("SELECT rol_neg_id as RolId, descripcion_rol_neg as Descripcion FROM roles_usuario WHERE email = '%s'", UserEmail)
+	query := fmt.Sprintf("SELECT rol_neg_id as RolId, descripcion_rol_neg as Descripcion FROM roles_usuario WHERE email = '%s' order by rol_neg_id asc", UserEmail)
 	fmt.Println(query)
 	rows, err := database.QueryDB(query)
 	if err != nil {
