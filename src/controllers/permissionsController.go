@@ -126,3 +126,18 @@ func CreatePermissionRequest(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responses.Response{Data: "Permission request created successfully"})
 
 }
+
+func GetRolesAplicativos(w http.ResponseWriter, r *http.Request) {
+	roles := models.RolesAplicativos{}
+	rolesList, err := roles.GetRolesAplicativos()
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(responses.Exception{Message: err.Error()})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(rolesList)
+}
